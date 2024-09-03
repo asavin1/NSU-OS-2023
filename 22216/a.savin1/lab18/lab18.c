@@ -7,6 +7,8 @@
 #include <grp.h>
 #include <libgen.h>
 #include <unistd.h>
+#include <errno.h>
+#include <limits.h>
 
 static void prntmode(struct stat *stbuf, char * isFile) {
     if (S_ISDIR(stbuf->st_mode)) {
@@ -54,7 +56,7 @@ static void prntimes(struct stat *stbuf) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 1) {
+    if (argc < 2) {
         fprintf(stderr, "Not enough args");
         return -1;
     }
@@ -76,8 +78,17 @@ int main(int argc, char *argv[]) {
         prntimes(&stbuf);
         printf("%20s", basename(argv[i]));
         if (isFile == 2) {
-            char target_path[pathconf("/", _PC_PATH_MAX) + 1];
-            ssize_t len = readlink(argv[i], target_path, sizeof(target_path)-1);
+            long path_max = pathconf(argv[i], _PC_PATH_MAX);
+            if (path_max == -1) {
+                if (errno == 0) {
+                    path_max = PATH_MAX;
+                } else {
+                    perror("pathconf failed");
+                    continue;
+                }
+            }
+            char target_path[path_max + 1];
+            ssize_t len = readlink(argv[i], target_path, path_max);
             if (len != -1) {
                 target_path[len] = '\0';
                 printf(" -> %s", target_path);
@@ -92,3 +103,4 @@ int main(int argc, char *argv[]) {
     }
     return 0;
 }
+
