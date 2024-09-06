@@ -92,7 +92,7 @@ int main() {
     }
 
     if (read_value == 0) {
-        printf("\connection terminated by client\n");
+        printf("\nconnection terminated by client\n");
     }
 
     close(client_sock);
