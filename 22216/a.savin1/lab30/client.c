@@ -7,7 +7,6 @@
 #include <errno.h>
 #include <stdio.h>
 
-#define SOCKET_PATH "unix_socket"
 #define BUFFER_SIZE 1024
 
 int sock = -1;
@@ -21,6 +20,7 @@ void handle_sigpipe(int sig) {
 
 int main() {
     struct sockaddr_un server_addr;
+    const char *socket_path = "unix_socket";
 
     signal(SIGPIPE, handle_sigpipe);
 
@@ -32,7 +32,7 @@ int main() {
 
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sun_family = AF_UNIX;
-    strcpy(server_addr.sun_path, SOCKET_PATH);
+    strcpy(server_addr.sun_path, socket_path);
 
     if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("connect failed");

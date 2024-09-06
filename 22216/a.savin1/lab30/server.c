@@ -7,9 +7,10 @@
 #include <ctype.h>
 #include <signal.h>
 
-#define SOCKET_PATH "unix_socket"
 #define BUFFER_SIZE 1024
 
+
+const char *socket_path = "unix_socket";
 int server_sock = -1, client_sock = -1;
 
 void to_uppercase(char *str, int read_value) {
@@ -54,7 +55,7 @@ int main() {
 
     server_addr.sun_family = AF_UNIX;
 
-    strcpy(server_addr.sun_path, SOCKET_PATH);
+    strcpy(server_addr.sun_path, socket_path);
 
 
     if (bind(server_sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_un)) == -1) {
@@ -97,7 +98,7 @@ int main() {
 
     close(client_sock);
     close(server_sock);
-    if (unlink(SOCKET_PATH) != 0) {
+    if (unlink(socket_path) != 0) {
         perror("unlink failed");
     }
     return 0;
