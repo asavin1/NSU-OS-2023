@@ -4,13 +4,20 @@
 #include <dirent.h>
 #include <fnmatch.h>
 #include <unistd.h>
+#include <errno.h>
 
 
 int main() {
+    errno = 0;
     long name_max = pathconf(".", _PC_NAME_MAX);
     if (name_max == -1) {
-        perror("failed to get max length of filename");
-        return -1;
+	if (errno != 0) {
+            perror("failed to get max length of filename");
+            return -1;
+	} else {
+	    name_max = 255;
+	    fprintf(stderr, "name_max is not defined for this fyle system, using default 255\n");
+	}
     }
     char pattern[name_max + 1];
 
