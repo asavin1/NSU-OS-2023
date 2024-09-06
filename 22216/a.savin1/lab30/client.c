@@ -39,11 +39,6 @@ int main() {
         close(sock);
         return -1;
     }
-    if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("connect failed");
-        close(sock);
-        return -1;
-    }
 
     printf("enter text to send to server: \n");
 
