@@ -5,6 +5,7 @@
 #include <sys/un.h>
 #include <signal.h>
 #include <errno.h>
+#include <stdio.h>
 
 #define SOCKET_PATH "unix_socket"
 #define BUFFER_SIZE 1024
