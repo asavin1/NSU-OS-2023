@@ -29,7 +29,7 @@ void handle_sigint(int sig) {
     if (client_sock != -1) {
         close(client_sock);
     }
-    if (unlink(SOCKET_PATH) != 0) {
+    if (unlink(socket_path) != 0) {
         perror("unlink failed");
     }
     printf("\nserver terminated by SIGINT signal\n");
