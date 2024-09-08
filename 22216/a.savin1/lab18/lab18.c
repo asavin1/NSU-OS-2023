@@ -78,10 +78,10 @@ int main(int argc, char *argv[]) {
         prntimes(&stbuf);
         printf("%20s", basename(argv[i]));
         if (isFile == 2) {
-            long path_max = pathconf(argv[i], _PC_PATH_MAX);
+            long path_max = pathconf(argv[i], _PC_SYMLINK_MAX);
             if (path_max == -1) {
                 if (errno == 0) {
-                    path_max = PATH_MAX;
+                    path_max = 1024;
                 } else {
                     perror("pathconf failed");
                     continue;
