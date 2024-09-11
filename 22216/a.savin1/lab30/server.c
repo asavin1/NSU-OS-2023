@@ -21,8 +21,7 @@ void to_uppercase(char *str, int read_value) {
     }
 }
 
-void handle_sigint(int sig) {
-    (void) sig;
+void clear() {
     if (server_sock != -1) {
         close(server_sock);
     }
@@ -32,8 +31,13 @@ void handle_sigint(int sig) {
     if (unlink(socket_path) != 0) {
         perror("unlink failed");
     }
-    printf("\nserver terminated by SIGINT signal\n");
-    exit(0);
+}
+
+void handle_sigint(int sig) {
+    (void) sig;
+    write(STDERR_FILENO, "\nserver terminated by SIGINT signal\n", 36);
+    clear();
+    _exit(0);
 }
 
 int main() {
@@ -52,9 +56,7 @@ int main() {
     }
 
     memset(&server_addr, 0, sizeof(server_addr));
-
     server_addr.sun_family = AF_UNIX;
-
     strcpy(server_addr.sun_path, socket_path);
 
 
@@ -66,7 +68,7 @@ int main() {
 
     if (listen(server_sock, 5) == -1) {
         perror("listen failed");
-        close(server_sock);
+        clear();
         return -1;
     }
 
@@ -75,7 +77,7 @@ int main() {
     client_sock = accept(server_sock, NULL, NULL);
     if (client_sock == -1) {
         perror("accept failed");
-        close(server_sock);
+        clear();
         return -1;
     }
 
@@ -87,8 +89,7 @@ int main() {
 
     if (read_value == -1) {
         perror("read failed");
-        close(client_sock);
-        close(server_sock);
+        clear();
         return -1;
     }
 
@@ -96,10 +97,6 @@ int main() {
         printf("\nconnection terminated by client\n");
     }
 
-    close(client_sock);
-    close(server_sock);
-    if (unlink(socket_path) != 0) {
-        perror("unlink failed");
-    }
+    clear();
     return 0;
 }

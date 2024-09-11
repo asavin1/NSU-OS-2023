@@ -13,9 +13,11 @@ int sock = -1;
 
 void handle_sigpipe(int sig) {
     (void) sig;
-    printf("server was closed\n");
-    close(sock);
-    exit(0);
+    write(STDERR_FILENO, "server was closed\n", 18);
+    if (sock != -1) {
+        close(sock);
+    }
+    _exit(0);
 }
 
 int main() {
