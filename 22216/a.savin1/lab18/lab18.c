@@ -1,3 +1,5 @@
+#define _FILE_OFFSET_BITS 64
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
@@ -57,7 +59,7 @@ static void prntimes(struct stat *stbuf) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Not enough args");
+        fprintf(stderr, "Not enough args\n");
         return -1;
     }
     for (int i = 1; i < argc; i++) {
