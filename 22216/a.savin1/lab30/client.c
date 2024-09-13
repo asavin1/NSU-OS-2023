@@ -24,7 +24,7 @@ int main() {
     struct sockaddr_un server_addr;
     const char *socket_path = "unix_socket";
 
-    if (signal(SIGPIPE, handle_sigpipe)) {
+    if (signal(SIGPIPE, handle_sigpipe) == SIG_ERR) {
 	perror("failed to handle sigpipe");
 	return -1;
     }
