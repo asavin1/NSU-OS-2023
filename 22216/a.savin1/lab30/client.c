@@ -24,7 +24,10 @@ int main() {
     struct sockaddr_un server_addr;
     const char *socket_path = "unix_socket";
 
-    signal(SIGPIPE, handle_sigpipe);
+    if (signal(SIGPIPE, handle_sigpipe)) {
+	perror("failed to handle sigpipe");
+	return -1;
+    }
 
     sock = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sock < 0) {
