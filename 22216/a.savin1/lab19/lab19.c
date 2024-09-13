@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 
     int found = 0;
     struct dirent *entry;
-
+    errno = 0;
     while ((entry = readdir(dir)) != NULL) {
 	if (fnmatch(argv[1], entry->d_name, 0) == 0) {
 	    printf("%s\n", entry->d_name);
