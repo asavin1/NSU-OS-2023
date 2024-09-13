@@ -38,7 +38,7 @@ int main() {
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sun_family = AF_UNIX;
     strcpy(server_addr.sun_path, socket_path);
-if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+    if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("connect failed");
         close(sock);
         return -1;
