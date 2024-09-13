@@ -7,7 +7,7 @@
 #include <fnmatch.h>
 #include <errno.h>
 
-void closedir(DIR *dir) {
+void my_closedir(DIR *dir) {
     if (closedir(dir) == -1) {
 	perror("closedir failed");
 	exit(-1);
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 
     if (errno != 0) {
    	perror("readdir failed");
-  	closedir(dir);
+  	my_closedir(dir);
  	return -1;
     }
 
@@ -54,6 +54,6 @@ int main(int argc, char* argv[]) {
 	printf("failed to find files matching the template: %s\n", argv[1]);
     }
 
-    closedir(dir);
+    my_closedir(dir);
     return 0;
 }
