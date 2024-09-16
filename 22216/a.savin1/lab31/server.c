@@ -34,8 +34,8 @@ void clear() {
         }
     }
     if (unlink(socket_path) != 0) {
-        perror("unlink failed");
-        exit(-1);
+        write(STDERR_FILENO, "\nunlink failed\n", 15);
+        _exit(-1);
     }
 }
 
@@ -46,36 +46,31 @@ void handle_sigint(int sig) {
     _exit(0);
 }
 
-void handle_new_connection() {
-    int free_slot = -1;
+int free_slot() {
+    int slot = -1;
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (client_socks[i] == 0) {
-            free_slot = i;
+            slot = i;
             break;
         }
     }
+    return slot;
+}
 
+void handle_new_connection() {
     int new_socket = accept(server_sock, NULL, NULL);
     if (new_socket < 0) {
-        perror("accept failed");
-        clear();
-        exit(1);
-    } else if (free_slot != -1) {
-        printf("New connection accepted\n");
-        client_socks[free_slot] = new_socket;
+	perror("accept failed");
+	clear();
+	exit(1);
     } else {
-        printf("Connection rejected\n");
-        close(new_socket);
+	printf("New connection accepted\n");
+	client_socks[slot] = new_socket;
     }
 }
 
 int main() {
     struct sockaddr_un server_addr;
-
-    if (signal(SIGINT, handle_sigint) == SIG_ERR) {
-        perror("failed to handle sigint");
-        return -1;
-    }
 
     server_sock = socket(AF_UNIX, SOCK_STREAM, 0);
     if (server_sock == -1) {
@@ -93,6 +88,11 @@ int main() {
         return -1;
     }
 
+    if (signal(SIGINT, handle_sigint) == SIG_ERR) {
+        perror("failed to handle sigint");
+        return -1;
+    }
+
     if (listen(server_sock, MAX_CLIENTS) == -1) {
         perror("listen failed");
         clear();
@@ -106,7 +106,9 @@ int main() {
     int max_sd, activity, sd;
     while (1) {
         FD_ZERO(&readfds);
-        FD_SET(server_sock, &readfds);
+	if (free_slot() != -1) {
+	    FD_SET(server_sock, &readfds);
+	}
         max_sd = server_sock;
 
         for (int i = 0; i < MAX_CLIENTS; i++) {
