@@ -65,7 +65,7 @@ void handle_new_connection() {
 	exit(1);
     } else {
 	printf("New connection accepted\n");
-	client_socks[free_slot] = new_socket;
+	client_socks[free_slot()] = new_socket;
     }
 }
 
